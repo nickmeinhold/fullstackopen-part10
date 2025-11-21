@@ -1,22 +1,25 @@
 import Constants from "expo-constants";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import theme from "../theme"; // updated
 
 const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight,
-    backgroundColor: "#24292e",
+    backgroundColor: theme.colors.appBarBackground,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingBottom: 10,
+    paddingHorizontal: theme.spacing.large,
+    paddingBottom: theme.spacing.small,
   },
   tab: {
-    marginRight: 20,
+    marginRight: theme.spacing.medium,
+    paddingVertical: theme.spacing.small,
+    paddingHorizontal: theme.spacing.small,
   },
   tabText: {
-    color: "#fff",
+    color: theme.colors.white,
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: theme.fontSizes.subheading,
   },
 });
 
