@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 const theme = {
   colors: {
     appBarBackground: "#24292e",
@@ -19,6 +21,12 @@ const theme = {
     medium: 12,
     large: 16,
   },
+  fontFamily:
+    Platform.OS === "android"
+      ? "Roboto"
+      : Platform.OS === "ios"
+      ? "Arial"
+      : "System",
 } as const;
 
 export type Theme = typeof theme;
