@@ -1,6 +1,7 @@
 import Constants from "expo-constants";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import theme from "../theme"; // updated
+import { StyleSheet, View } from "react-native";
+import theme from "../theme";
+import AppBarTab from "./AppBarTab";
 
 const styles = StyleSheet.create({
   container: {
@@ -11,24 +12,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.large,
     paddingBottom: theme.spacing.small,
   },
-  tab: {
-    marginRight: theme.spacing.medium,
-    paddingVertical: theme.spacing.small,
-    paddingHorizontal: theme.spacing.small,
-  },
-  tabText: {
-    color: theme.colors.white,
-    fontWeight: "700",
-    fontSize: theme.fontSizes.subheading,
-  },
+  // tab styles moved to AppBarTab
 });
 
 const AppBar = () => {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.tab} onPress={() => {}}>
-        <Text style={styles.tabText}>Repositories</Text>
-      </Pressable>
+      <AppBarTab title="Repositories" onPress={() => {}} />
     </View>
   );
 };
