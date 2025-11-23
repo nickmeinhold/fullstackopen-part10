@@ -1,5 +1,9 @@
 import { Formik } from "formik";
+import React from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { useNavigate } from "react-router-native";
+import useSignIn from "../hooks/useSignIn";
+
 import * as Yup from "yup";
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -25,12 +29,28 @@ const styles = StyleSheet.create({
 });
 
 const SignIn = () => {
+  const [signIn] = useSignIn();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
   return (
     <Formik
       initialValues={{ username: "", password: "" }}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        console.log(values);
+      onSubmit={async (values) => {
+        const { username, password } = values;
+        setErrorMessage(null);
+        try {
+          const accessToken = await signIn({ username, password });
+          if (accessToken) {
+            navigate("/");
+          } else {
+            setErrorMessage("Sign in failed. Please check your credentials.");
+          }
+        } catch (e) {
+          setErrorMessage("Sign in failed. Please try again.");
+          console.log(e);
+        }
       }}
     >
       {({
@@ -72,6 +92,11 @@ const SignIn = () => {
           {touched.password && errors.password && (
             <Text style={{ color: "red", marginBottom: 8 }}>
               {errors.password}
+            </Text>
+          )}
+          {errorMessage && (
+            <Text style={{ color: "red", marginBottom: 8 }}>
+              {errorMessage}
             </Text>
           )}
           <View style={styles.button}>
