@@ -1,10 +1,11 @@
-import { StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
 import { Link } from "react-router-native";
 import theme from "../theme";
 
 interface AppBarTabProps {
   title: string;
-  to: string;
+  to?: string;
+  onPress?: () => void;
 }
 
 const styles = StyleSheet.create({
@@ -20,10 +21,27 @@ const styles = StyleSheet.create({
   },
 });
 
-const AppBarTab = ({ title, to }: AppBarTabProps) => (
-  <Link to={to} style={styles.tab} underlayColor={theme.colors.primary}>
-    <Text style={styles.tabText}>{title}</Text>
-  </Link>
-);
+const AppBarTab = ({ title, to, onPress }: AppBarTabProps) => {
+  if (onPress) {
+    return (
+      <Pressable
+        style={styles.tab}
+        onPress={onPress}
+        android_ripple={{ color: theme.colors.primary }}
+      >
+        <Text style={styles.tabText}>{title}</Text>
+      </Pressable>
+    );
+  }
+  return (
+    <Link
+      to={typeof to === "string" ? to : ""}
+      style={styles.tab}
+      underlayColor={theme.colors.primary}
+    >
+      <Text style={styles.tabText}>{title}</Text>
+    </Link>
+  );
+};
 
 export default AppBarTab;

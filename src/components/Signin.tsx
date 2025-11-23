@@ -88,6 +88,7 @@ const SignIn = () => {
             onBlur={handleBlur("password")}
             value={values.password}
             secureTextEntry
+            onSubmitEditing={() => handleSubmit()}
           />
           {touched.password && errors.password && (
             <Text style={{ color: "red", marginBottom: 8 }}>
