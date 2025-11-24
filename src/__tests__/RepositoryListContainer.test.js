@@ -1,8 +1,9 @@
-import { render } from "@testing-library/react-native";
+import { render, within } from "@testing-library/react-native";
+import { NativeRouter } from "react-router-native";
 import { RepositoryListContainer } from "../components/RepositoryList";
 
 describe("RepositoryListContainer", () => {
-  it("renders repository info correctly", () => {
+  it("renders repository info correctly", async () => {
     const repositories = {
       edges: [
         {
@@ -34,28 +35,32 @@ describe("RepositoryListContainer", () => {
       ],
     };
 
-    const { getByText, getByTestId } = render(
-      <RepositoryListContainer repositories={repositories} />
+    const { getByTestId } = render(
+      <NativeRouter>
+        <RepositoryListContainer repositories={repositories} />
+      </NativeRouter>
     );
 
     // First repo
     const repo1 = getByTestId("repositoryItem-repo1");
-    expect(getByText("user/repo1")).toBeTruthy();
-    expect(getByText("First repo")).toBeTruthy();
-    expect(getByText("TypeScript")).toBeTruthy();
-    expect(getByText("1.2k")).toBeTruthy(); // formatted forksCount
-    expect(getByText("5.7k")).toBeTruthy(); // formatted stargazersCount
-    expect(getByText("88")).toBeTruthy(); // ratingAverage
-    expect(getByText("42")).toBeTruthy(); // reviewCount
+    expect(within(repo1).getByText("user/repo1")).toBeTruthy();
+    expect(within(repo1).getByText("First repo")).toBeTruthy();
+    expect(within(repo1).getByText("TypeScript")).toBeTruthy();
+    expect(within(repo1).getByText("1.2k")).toBeTruthy(); // formatted forksCount
+    expect(within(repo1).getByText("5.7k")).toBeTruthy(); // formatted stargazersCount
+    expect(within(repo1).getByText("88")).toBeTruthy(); // ratingAverage
+    expect(within(repo1).getByText("42")).toBeTruthy(); // reviewCount
+    expect(getByTestId("githubButton-repo1")).toBeTruthy();
 
     // Second repo
     const repo2 = getByTestId("repositoryItem-repo2");
-    expect(getByText("user/repo2")).toBeTruthy();
-    expect(getByText("Second repo")).toBeTruthy();
-    expect(getByText("JavaScript")).toBeTruthy();
-    expect(getByText("432")).toBeTruthy(); // forksCount
-    expect(getByText("876")).toBeTruthy(); // stargazersCount
-    expect(getByText("95")).toBeTruthy(); // ratingAverage
-    expect(getByText("12")).toBeTruthy(); // reviewCount
+    expect(within(repo2).getByText("user/repo2")).toBeTruthy();
+    expect(within(repo2).getByText("Second repo")).toBeTruthy();
+    expect(within(repo2).getByText("JavaScript")).toBeTruthy();
+    expect(within(repo2).getByText("432")).toBeTruthy(); // forksCount
+    expect(within(repo2).getByText("876")).toBeTruthy(); // stargazersCount
+    expect(within(repo2).getByText("95")).toBeTruthy(); // ratingAverage
+    expect(within(repo2).getByText("12")).toBeTruthy(); // reviewCount
+    expect(getByTestId("githubButton-repo2")).toBeTruthy();
   });
 });

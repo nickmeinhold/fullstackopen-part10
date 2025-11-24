@@ -48,6 +48,7 @@ export const RepositoryItemView = ({
           title="Open in GitHub"
           onPress={() => Linking.openURL(url)}
           accessibilityLabel="Open repository in GitHub"
+          testID={`githubButton-${repository.id}`}
         />
       )}
     </View>

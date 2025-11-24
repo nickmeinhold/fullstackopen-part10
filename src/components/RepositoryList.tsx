@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useNavigate } from "react-router-native";
 import { GET_REPOSITORIES, ME } from "../graphql/queries";
 import { RepositoryItemView } from "./RepositoryItem";
 
@@ -28,12 +29,15 @@ export const RepositoryListContainer = ({
 }: {
   repositories: any;
 }) => {
+  const navigate = useNavigate();
   const repositoryNodes = repositories
     ? repositories.edges.map((edge: any) => edge.node)
     : [];
 
   const renderItem = ({ item }: { item: Repository }) => (
-    <RepositoryItemView repository={item} showGithubButton={true} />
+    <Pressable onPress={() => navigate(`/repository/${item.id}`)}>
+      <RepositoryItemView repository={item} showGithubButton={true} />
+    </Pressable>
   );
 
   return (

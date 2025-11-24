@@ -1,8 +1,9 @@
 import { StyleSheet, View } from "react-native";
-import { Route, Routes } from "react-router-native";
+import { Route, Routes, useParams } from "react-router-native";
 import AppBar from "./AppBar";
 import RepositoryList from "./RepositoryList";
 import SignIn from "./Signin";
+import SingleRepositoryView from "./SingleRepositoryView";
 
 const styles = StyleSheet.create({
   container: {
@@ -11,6 +12,11 @@ const styles = StyleSheet.create({
   },
 });
 
+const SingleRepoRoute = () => {
+  const { id } = useParams();
+  return <SingleRepositoryView id={id ?? ""} />;
+};
+
 const Main = () => {
   return (
     <View style={styles.container}>
@@ -18,6 +24,7 @@ const Main = () => {
       <Routes>
         <Route path="/" element={<RepositoryList />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/repository/:id" element={<SingleRepoRoute />} />
       </Routes>
     </View>
   );

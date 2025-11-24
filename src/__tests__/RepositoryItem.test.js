@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react-native";
-import RepositoryItem from "../components/RepositoryItem";
+import { RepositoryItemView } from "../components/RepositoryItem";
 
 describe("RepositoryItem", () => {
   it("renders repository info correctly", () => {
@@ -15,7 +15,9 @@ describe("RepositoryItem", () => {
       ownerAvatarUrl: "https://example.com/avatar.png",
     };
 
-    const { getByText } = render(<RepositoryItem repository={repository} />);
+    const { getByText, getByRole } = render(
+      <RepositoryItemView repository={repository} showGithubButton={true} />
+    );
 
     expect(getByText("user/repo")).toBeTruthy();
     expect(getByText("A test repository")).toBeTruthy();
@@ -24,5 +26,6 @@ describe("RepositoryItem", () => {
     expect(getByText("5.7k")).toBeTruthy(); // formatted stargazersCount
     expect(getByText("88")).toBeTruthy(); // ratingAverage
     expect(getByText("42")).toBeTruthy(); // reviewCount
+    expect(getByRole("button", { name: /open in github/i })).toBeTruthy();
   });
 });
