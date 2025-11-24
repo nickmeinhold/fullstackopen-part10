@@ -60,6 +60,7 @@
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.5.1",
     "react-router-native": "^6.30.0",
+    "use-debounce": "^10.0.6",
     "yup": "^1.7.1"
   },
   "devDependencies": {
