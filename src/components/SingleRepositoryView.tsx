@@ -83,12 +83,15 @@ const SingleRepositoryView = ({ id }: { id: string }) => {
   const { data, loading, error, fetchMore } = useQuery(GET_REPOSITORY, {
     variables: { id, first: REVIEWS_PAGE_SIZE, after: undefined },
     fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      const edges = data?.repository?.reviews?.edges || [];
-      setReviews(edges.map((edge: any) => edge.node));
-      setPageInfo(data?.repository?.reviews?.pageInfo);
-    },
   });
+
+  React.useEffect(() => {
+    if (data?.repository?.reviews) {
+      const edges = data.repository.reviews.edges || [];
+      setReviews(edges.map((edge: any) => edge.node));
+      setPageInfo(data.repository.reviews.pageInfo);
+    }
+  }, [data]);
 
   const handleFetchMore = () => {
     if (!pageInfo?.hasNextPage || loading) return;
@@ -98,7 +101,7 @@ const SingleRepositoryView = ({ id }: { id: string }) => {
         first: REVIEWS_PAGE_SIZE,
         after: pageInfo.endCursor,
       },
-      updateQuery: (prevResult, { fetchMoreResult }) => {
+      updateQuery: (_prevResult, { fetchMoreResult }) => {
         const newEdges = fetchMoreResult?.repository?.reviews?.edges || [];
         const newPageInfo = fetchMoreResult?.repository?.reviews?.pageInfo;
         setReviews((prev) => [

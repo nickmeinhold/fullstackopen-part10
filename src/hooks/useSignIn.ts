@@ -1,6 +1,6 @@
 import { MutationResult, useApolloClient, useMutation } from "@apollo/client";
 import { AUTHENTICATE } from "../graphql/mutations";
-import useAuthStorage from "../hooks/useAuthStorage";
+import useAuthStorage from "./useAuthStorage";
 
 type SignInFunction = (credentials: {
   username: string;
