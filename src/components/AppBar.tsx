@@ -46,6 +46,9 @@ const AppBar = () => {
         {data && data.me && (
           <AppBarTab title="Create a review" to="/create-review" />
         )}
+        {!data?.me && (
+          <AppBarTab title="Sign up" to="/signup" />
+        )}
         {data && data.me ? (
           <AppBarTab title="Sign out" to="/" onPress={handleSignOut} />
         ) : (

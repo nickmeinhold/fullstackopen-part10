@@ -3,6 +3,7 @@ import { Route, Routes, useParams } from "react-router-native";
 import AppBar from "./AppBar";
 import RepositoryList from "./RepositoryList";
 import ReviewForm from "./ReviewForm";
+import SignUpForm from "./SignUpForm";
 import SignIn from "./Signin";
 import SingleRepositoryView from "./SingleRepositoryView";
 
@@ -25,6 +26,7 @@ const Main = () => {
       <Routes>
         <Route path="/" element={<RepositoryList />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUpForm />} />
         <Route path="/repository/:id" element={<SingleRepoRoute />} />
         <Route path="/create-review" element={<ReviewForm />} />
       </Routes>
