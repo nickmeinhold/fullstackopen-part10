@@ -75,18 +75,45 @@ const ReviewItem = ({ review }: { review: any }) => (
   </View>
 );
 
+const REVIEWS_PAGE_SIZE = 5;
+
 const SingleRepositoryView = ({ id }: { id: string }) => {
-  const { data, loading, error } = useQuery(GET_REPOSITORY, {
-    variables: { id },
+  const [reviews, setReviews] = React.useState<any[]>([]);
+  const [pageInfo, setPageInfo] = React.useState<any>(null);
+  const { data, loading, error, fetchMore } = useQuery(GET_REPOSITORY, {
+    variables: { id, first: REVIEWS_PAGE_SIZE, after: undefined },
     fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      const edges = data?.repository?.reviews?.edges || [];
+      setReviews(edges.map((edge: any) => edge.node));
+      setPageInfo(data?.repository?.reviews?.pageInfo);
+    },
   });
 
-  if (loading) return <ActivityIndicator />;
+  const handleFetchMore = () => {
+    if (!pageInfo?.hasNextPage || loading) return;
+    fetchMore({
+      variables: {
+        id,
+        first: REVIEWS_PAGE_SIZE,
+        after: pageInfo.endCursor,
+      },
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        const newEdges = fetchMoreResult?.repository?.reviews?.edges || [];
+        const newPageInfo = fetchMoreResult?.repository?.reviews?.pageInfo;
+        setReviews((prev) => [
+          ...prev,
+          ...newEdges.map((edge: any) => edge.node),
+        ]);
+        setPageInfo(newPageInfo);
+        return fetchMoreResult;
+      },
+    });
+  };
+
+  if (loading && reviews.length === 0) return <ActivityIndicator />;
   if (error) return <Text>Error loading repository</Text>;
   if (!data?.repository) return <Text>Repository not found</Text>;
-
-  const reviews =
-    data.repository.reviews?.edges.map((edge: any) => edge.node) || [];
 
   return (
     <FlatList
@@ -101,6 +128,8 @@ const SingleRepositoryView = ({ id }: { id: string }) => {
           githubUrl={data.repository.url}
         />
       )}
+      onEndReached={handleFetchMore}
+      onEndReachedThreshold={0.5}
     />
   );
 };
