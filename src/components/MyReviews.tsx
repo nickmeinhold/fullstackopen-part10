@@ -1,6 +1,8 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import React from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { useNavigate } from "react-router-native";
+import { DELETE_REVIEW } from "../graphql/mutations";
 import { ME } from "../graphql/queries";
 
 const styles = StyleSheet.create({
@@ -29,10 +31,12 @@ const styles = StyleSheet.create({
 });
 
 const MyReviews = () => {
-  const { data, loading, error } = useQuery(ME, {
+  const navigate = useNavigate();
+  const { data, loading, error, refetch } = useQuery(ME, {
     fetchPolicy: "cache-and-network",
     variables: { includeReviews: true },
   });
+  const [deleteReview] = useMutation(DELETE_REVIEW);
 
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error loading reviews.</Text>;
@@ -47,6 +51,31 @@ const MyReviews = () => {
     );
   }
 
+  const handleViewRepo = (repoId: string) => {
+    navigate(`/repository/${repoId}`);
+  };
+
+  const handleDeleteReview = (reviewId: string) => {
+    Alert.alert(
+      "Delete review",
+      "Are you sure you want to delete this review?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            await deleteReview({ variables: { id: reviewId } });
+            refetch();
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -60,6 +89,22 @@ const MyReviews = () => {
               <Text>{new Date(item.createdAt).toLocaleDateString()}</Text>
             </View>
             <Text style={styles.reviewText}>{item.text}</Text>
+            <View style={{ flexDirection: "row", marginTop: 8 }}>
+              <View style={{ flex: 1, marginRight: 8 }}>
+                <Button
+                  title="View repository"
+                  onPress={() => handleViewRepo(item.repository.id)}
+                  color="#007AFF"
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Button
+                  title="Delete review"
+                  onPress={() => handleDeleteReview(item.id)}
+                  color="#FF3B30"
+                />
+              </View>
+            </View>
           </View>
         )}
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
