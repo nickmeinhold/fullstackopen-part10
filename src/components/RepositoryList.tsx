@@ -1,4 +1,6 @@
 import { useQuery } from "@apollo/client";
+import { Picker } from "@react-native-picker/picker";
+import React, { useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigate } from "react-router-native";
 import { GET_REPOSITORIES, ME } from "../graphql/queries";
@@ -26,8 +28,10 @@ const ItemSeparator = () => <View style={styles.separator} />;
 
 export const RepositoryListContainer = ({
   repositories,
+  ListHeaderComponent,
 }: {
   repositories: any;
+  ListHeaderComponent?: React.ReactElement;
 }) => {
   const navigate = useNavigate();
   const repositoryNodes = repositories
@@ -46,21 +50,25 @@ export const RepositoryListContainer = ({
       ItemSeparatorComponent={ItemSeparator}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
+      ListHeaderComponent={ListHeaderComponent}
     />
   );
 };
 
 const RepositoryList = () => {
+  const [orderBy, setOrderBy] = useState("CREATED_AT");
+  const [orderDirection, setOrderDirection] = useState("DESC");
+
   const { data } = useQuery(GET_REPOSITORIES, {
     fetchPolicy: "cache-and-network",
     variables: {
       first: 10,
-      orderBy: "CREATED_AT",
-      orderDirection: "DESC",
+      orderBy,
+      orderDirection,
       searchKeyword: "",
-      after: null,
     },
   });
+  console.log("RepositoryList query data:", data);
 
   const { data: meData } = useQuery(ME);
 
@@ -72,7 +80,63 @@ const RepositoryList = () => {
     );
   }
 
-  return <RepositoryListContainer repositories={data?.repositories} />;
+  const handleOrderChange = (value: string) => {
+    console.log("Selected order:", value);
+    if (value === "LATEST") {
+      setOrderBy("CREATED_AT");
+      setOrderDirection("DESC");
+    } else if (value === "HIGHEST") {
+      setOrderBy("RATING_AVERAGE");
+      setOrderDirection("DESC");
+    } else if (value === "LOWEST") {
+      setOrderBy("RATING_AVERAGE");
+      setOrderDirection("ASC");
+    }
+  };
+
+  return (
+    <View>
+      <View
+        style={{
+          padding: 10,
+          backgroundColor: "#fff",
+          minHeight: 80,
+          justifyContent: "center",
+        }}
+      >
+        <Text style={{ fontWeight: "bold", marginBottom: 6 }}>
+          Order repositories by:
+        </Text>
+        <Picker
+          selectedValue={(() => {
+            if (orderBy === "CREATED_AT" && orderDirection === "DESC")
+              return "LATEST";
+            if (orderBy === "RATING_AVERAGE" && orderDirection === "DESC")
+              return "HIGHEST";
+            if (orderBy === "RATING_AVERAGE" && orderDirection === "ASC")
+              return "LOWEST";
+            return "LATEST";
+          })()}
+          onValueChange={handleOrderChange}
+          mode="dropdown"
+        >
+          <Picker.Item label="Latest repositories" value="LATEST" />
+          <Picker.Item label="Highest rated repositories" value="HIGHEST" />
+          <Picker.Item label="Lowest rated repositories" value="LOWEST" />
+        </Picker>
+      </View>
+      {data?.repositories?.edges?.length ? (
+        <RepositoryListContainer
+          repositories={data?.repositories}
+          key={`${orderBy}-${orderDirection}`}
+        />
+      ) : (
+        <Text style={{ padding: 16, color: "red" }}>
+          No repositories found for this ordering.
+        </Text>
+      )}
+    </View>
+  );
 };
 
 export default RepositoryList;
