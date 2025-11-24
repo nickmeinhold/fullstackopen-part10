@@ -75,7 +75,7 @@ const ReviewItem = ({ review }: { review: any }) => (
   </View>
 );
 
-const REVIEWS_PAGE_SIZE = 5;
+const REVIEWS_PAGE_SIZE = 2;
 
 const SingleRepositoryView = ({ id }: { id: string }) => {
   const [reviews, setReviews] = React.useState<any[]>([]);
@@ -88,7 +88,8 @@ const SingleRepositoryView = ({ id }: { id: string }) => {
   React.useEffect(() => {
     if (data?.repository?.reviews) {
       const edges = data.repository.reviews.edges || [];
-      setReviews(edges.map((edge: any) => edge.node));
+      const nodes = edges.map((edge: any) => edge.node);
+      setReviews(nodes);
       setPageInfo(data.repository.reviews.pageInfo);
     }
   }, [data]);
@@ -101,16 +102,6 @@ const SingleRepositoryView = ({ id }: { id: string }) => {
         first: REVIEWS_PAGE_SIZE,
         after: pageInfo.endCursor,
       },
-      updateQuery: (_prevResult, { fetchMoreResult }) => {
-        const newEdges = fetchMoreResult?.repository?.reviews?.edges || [];
-        const newPageInfo = fetchMoreResult?.repository?.reviews?.pageInfo;
-        setReviews((prev) => [
-          ...prev,
-          ...newEdges.map((edge: any) => edge.node),
-        ]);
-        setPageInfo(newPageInfo);
-        return fetchMoreResult;
-      },
     });
   };
 
@@ -122,7 +113,7 @@ const SingleRepositoryView = ({ id }: { id: string }) => {
     <FlatList
       data={reviews}
       renderItem={({ item }) => <ReviewItem review={item} />}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => `review-${item.id}`}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={() => (
         <RepositoryItemView
