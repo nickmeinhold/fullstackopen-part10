@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
 });
 
 const RepositoryItem = ({ repository }: { repository: Repository }) => (
-  <View style={styles.container}>
+  <View style={styles.container} testID={`repositoryItem-${repository.id}`}>
     <RepositoryAvatar uri={repository.ownerAvatarUrl} />
     <View style={{ flex: 1 }}>
       <RepositoryInfo repository={repository} />

@@ -21,15 +21,32 @@ export interface Repository {
   ownerAvatarUrl: string;
 }
 
-export interface RepositoryListProps {
-  repositories?: Repository[];
-}
-
 const ItemSeparator = () => <View style={styles.separator} />;
 
-const RepositoryList = ({
-  repositories: propRepositories,
-}: RepositoryListProps) => {
+export const RepositoryListContainer = ({
+  repositories,
+}: {
+  repositories: any;
+}) => {
+  const repositoryNodes = repositories
+    ? repositories.edges.map((edge: any) => edge.node)
+    : [];
+
+  const renderItem = ({ item }: { item: Repository }) => (
+    <RepositoryItem repository={item} />
+  );
+
+  return (
+    <FlatList
+      data={repositoryNodes}
+      ItemSeparatorComponent={ItemSeparator}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+    />
+  );
+};
+
+const RepositoryList = () => {
   const { data } = useQuery(GET_REPOSITORIES, {
     fetchPolicy: "cache-and-network",
     variables: {
@@ -43,13 +60,6 @@ const RepositoryList = ({
 
   const { data: meData } = useQuery(ME);
 
-  const dataEdges = data?.repositories?.edges || [];
-  const dataRepositories = dataEdges.map((edge: any) => edge.node);
-
-  const renderItem = ({ item }: { item: Repository }) => (
-    <RepositoryItem repository={item} />
-  );
-
   if (!meData?.me) {
     return (
       <View>
@@ -58,14 +68,7 @@ const RepositoryList = ({
     );
   }
 
-  return (
-    <FlatList
-      data={dataRepositories}
-      ItemSeparatorComponent={ItemSeparator}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-    />
-  );
+  return <RepositoryListContainer repositories={data?.repositories} />;
 };
 
 export default RepositoryList;
