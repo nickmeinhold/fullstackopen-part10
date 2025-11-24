@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Button, Linking, StyleSheet, View } from "react-native";
 import theme from "../theme";
 import RepositoryAvatar from "./RepositoryAvatar";
 import RepositoryInfo from "./RepositoryInfo";
@@ -29,5 +29,29 @@ const RepositoryItem = ({ repository }: { repository: Repository }) => (
     </View>
   </View>
 );
+
+export const RepositoryItemView = ({
+  repository,
+  showGithubButton = false,
+  githubUrl,
+}: {
+  repository: Repository;
+  showGithubButton?: boolean;
+  githubUrl?: string;
+}) => {
+  const url = githubUrl || `https://github.com/${repository.fullName}`;
+  return (
+    <View>
+      <RepositoryItem repository={repository} />
+      {showGithubButton && (
+        <Button
+          title="Open in GitHub"
+          onPress={() => Linking.openURL(url)}
+          accessibilityLabel="Open repository in GitHub"
+        />
+      )}
+    </View>
+  );
+};
 
 export default RepositoryItem;

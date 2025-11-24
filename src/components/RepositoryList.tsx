@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { GET_REPOSITORIES, ME } from "../graphql/queries";
-import RepositoryItem from "./RepositoryItem";
+import { RepositoryItemView } from "./RepositoryItem";
 
 const styles = StyleSheet.create({
   separator: {
@@ -33,7 +33,7 @@ export const RepositoryListContainer = ({
     : [];
 
   const renderItem = ({ item }: { item: Repository }) => (
-    <RepositoryItem repository={item} />
+    <RepositoryItemView repository={item} showGithubButton={true} />
   );
 
   return (
